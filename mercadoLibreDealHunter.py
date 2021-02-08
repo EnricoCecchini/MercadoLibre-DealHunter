@@ -1,4 +1,4 @@
-# Python program to search Amazon for the best deals on desired products using Selenium and Requests
+# Python program to search Mercadolibre for the best deals on desired products using Selenium and Requests
 
 # Import modules
 from selenium import webdriver
