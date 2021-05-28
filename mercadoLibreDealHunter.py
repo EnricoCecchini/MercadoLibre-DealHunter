@@ -64,7 +64,7 @@ def findProduct(productName, browser):
             searchPage = requests.get(searchURL)
             searchSoup = BeautifulSoup(searchPage.content, 'html.parser')
 
-            listViewButton = browser.find_element_by_xpath('//*[@id="root-app"]/div/div[1]/aside/section[1]/div[2]/div[2]/a[1]')
+            listViewButton = browser.find_element_by_xpath('/html/body/header/div/form/button')
             listViewButton.click()
             
             results = searchSoup.findAll(class_='ui-search-result__wrapper')
@@ -107,7 +107,7 @@ def findProduct(productName, browser):
             try:
                 nextPage = browser.find_element_by_xpath('//*[@id="root-app"]/div/div[1]/section/div[2]/ul/li[4]')
             except selenium.common.exceptions.NoSuchElementException:
-                nextPage = browser.find_element_by_xpath('//*[@id="root-app"]/div/div[1]/section/div[2]/ul/li[3]')
+                nextPage = browser.find_element_by_xpath('/html/body/main/div/div[1]/section/div[3]/ul/li[10]')
             
             nextPage.click()
         
@@ -140,6 +140,9 @@ def printProducts(products):
     else:
         cont = 1
         for product in products:
+            if cont == 1:
+                print('Cheapest: ')
+                
             print(f'Product {cont}')
             print(f'Name: {product.name}')
             print(f'Product Price: ${product.price}')
