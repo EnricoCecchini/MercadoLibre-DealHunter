@@ -53,8 +53,7 @@ def findProduct(productName, browser):
     # Empty array to store Product objects
     products = []
     name = ''
-    price = ''
-    url = ''
+    #price = 0.0
 
     # Loop to iterate all result pages
     while True:
@@ -88,8 +87,17 @@ def findProduct(productName, browser):
                 # Clean up Price data
                 priceStr = priceStr.replace('<div class="ui-search-item__group ui-search-item__group--price"><div class="ui-search-price ui-search-price--size-medium ui-search-item__group__element"><div class="ui-search-price__second-line"><span class="price-tag ui-search-price__part"><span class="price-tag-symbol">$</span><span class="price-tag-fraction">','')
                 priceStr = priceStr.replace(',','')
-                priceStr = priceStr.replace('</span></span><span class="ui-search-price__second-line__label"></span></div></div></div>','')
-                
+                priceStr = priceStr.replace('</span>','').replace('<span', '').replace('class="ui-search-price__second-line__label">','').replace('</div>','').replace('<div', '')
+                priceStr = priceStr.replace('</span></span><span class="ui-search-price__second-line__label"></span></div></div><span class="ui-search-item__group__element ui-search-installments ui-search-color--LIGHT_GREEN"><div class="ui-search-installments-prefix"><span>en</span></div>12x <div class="ui-search-price ui-search-price--size-x-tiny ui-search-color--LIGHT_GREEN"><div class="ui-search-price__second-line"><span class="price-tag ui-search-price__part"><span class="price-tag-symbol">$</span><span class="price-tag-fraction">1583</span></span></div></div>sin interés</span></div>','')
+                priceStr = priceStr.replace('$','')
+                priceStr = priceStr.split(' ', 1)
+                #print('Precio:',priceStr[0])
+                #print('Precio:',priceStr)
+                try:
+                    price = float(priceStr[0])
+                except ValueError:
+                    pass
+
                 # Get product URL
                 link = i.find('a').get('href')
 
@@ -101,18 +109,25 @@ def findProduct(productName, browser):
 
                 # If product is relevant, add it to the list
                 if validName is True:
-                    products.append(Product(name, priceStr, link))
+                    products.append(Product(name, price, link))
             
             # Travel to next result page
             try:
                 nextPage = browser.find_element_by_xpath('//*[@id="root-app"]/div/div[1]/section/div[2]/ul/li[4]')
+                nextPage.click()
             except selenium.common.exceptions.NoSuchElementException:
                 nextPage = browser.find_element_by_xpath('/html/body/main/div/div[1]/section/div[3]/ul/li[10]')
-            
-            nextPage.click()
+                nextPage.click()
+
+            #nextPage.click()
         
         # If last page is reached, print message to tell user
         except selenium.common.exceptions.ElementClickInterceptedException:
+            print('Last page reached')
+            print('\n\n')
+            break
+
+        except selenium.common.exceptions.NoSuchElementException:
             print('Last page reached')
             print('\n\n')
             break
@@ -141,13 +156,16 @@ def printProducts(products):
         cont = 1
         for product in products:
             if cont == 1:
-                print('Cheapest: ')
-                
+                print('Cheapest Product:')
+
             print(f'Product {cont}')
             print(f'Name: {product.name}')
             print(f'Product Price: ${product.price}')
             print(f'Product URL: {product.url}')
             print('')
+
+            if cont == 1:
+                print('****************************************')
 
             cont +=1
     
